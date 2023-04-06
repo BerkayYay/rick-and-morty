@@ -11,7 +11,7 @@ const getCharacters = async () => {
   return response.data;
 };
 
-const getCharacter = async id => {
+const getCharacterById = async id => {
   const response = await axios.get(`${baseUrl}/${id}`);
   return response.data;
 };
@@ -21,4 +21,4 @@ const getCharacterByUrl = async url => {
   return response.data;
 };
 
-export default {getCharacters, getCharacter, getCharacterByUrl};
+export default {getCharacters, getCharacterById, getCharacterByUrl};

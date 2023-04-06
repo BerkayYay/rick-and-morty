@@ -12,4 +12,10 @@ const getEpisodes = async episodes => {
   return response.data;
 };
 
-export default {getEpisodes};
+const getEpisodeByUrl = async url => {
+  const response = await axios.get(url);
+  // return array of episodes from response object
+  return response.data;
+};
+
+export default {getEpisodes, getEpisodeByUrl};

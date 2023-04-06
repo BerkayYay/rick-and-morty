@@ -64,9 +64,6 @@ const HomeScreen = () => {
       });
   }, [page]);
 
-  // pagination ekle. Her sayfada 5 episode goster. Next butonu ile bir sonraki sayfaya gec.
-  // Multiple karakter eklemesi de yapilabilir. Doc ta var
-
   return (
     <View>
       <ScrollView>

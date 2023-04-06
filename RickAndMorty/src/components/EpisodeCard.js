@@ -1,12 +1,23 @@
-import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import CharacterService from '../services/CharacterService';
+import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {setSelectedCharacterId, setEpisodeId} from '../redux/reducers';
 
 const EpisodeCard = props => {
+  const dispatch = useDispatch();
   const [charUrls, setCharUrls] = useState(props.characters);
   const [characters, setCharacters] = useState([]);
   const [page, setPage] = useState(1);
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     charUrls.map(url => {
@@ -45,7 +56,8 @@ const EpisodeCard = props => {
           backgroundColor: '#124559',
         }}
         onPress={() => {
-          console.log(item.id);
+          dispatch(setSelectedCharacterId(item.id));
+          navigation.navigate('Detail');
         }}>
         {/* Character Image */}
         <View
@@ -148,10 +160,18 @@ const EpisodeCard = props => {
             {props.episode.episode}
           </Text>
         </View>
+
         <View style={{alignItems: 'flex-end', justifyContent: 'flex-start'}}>
           <Text style={{fontSize: 15, color: 'white', fontWeight: 'bold'}}>
             {props.episode.air_date}
           </Text>
+          <Button
+            title="Episode Details"
+            onPress={() => {
+              dispatch(setEpisodeId(props.episode.id));
+              navigation.navigate('Episode');
+            }}
+          />
         </View>
       </View>
       {/* Episode Header End*/}

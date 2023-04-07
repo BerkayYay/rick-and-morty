@@ -1,13 +1,9 @@
-// Rick and Morty Character Service
-// This service is responsible for fetching character data from the Rick and Morty API
-// and returning it to the caller.
-
 import axios from 'axios';
 
 const baseUrl = 'https://rickandmortyapi.com/api/character';
 
 const getCharacters = async () => {
-  const response = await axios.get(baseUrl);
+  const response = await axios.get(`${baseUrl}`);
   return response.data;
 };
 

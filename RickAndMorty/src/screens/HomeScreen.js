@@ -5,15 +5,27 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  SafeAreaView,
+  TextInput,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import EpisodeCard from '../components/EpisodeCard';
 import EpisodeService from '../services/EpisodeService';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
 
 const HomeScreen = () => {
+  const nav = useNavigation();
   const [episodes, setEpisodes] = useState([]);
   const [page, setPage] = useState([1, 2, 3, 4, 5]);
   const [episodePerPage, setEpisodePerPage] = useState(5);
+  const [searchText, setSearchText] = useState('');
+
+  useLayoutEffect(() => {
+    nav.setOptions({
+      headerShown: false,
+    });
+  }, []);
 
   const handleLoadMore = () => {
     for (
@@ -65,8 +77,26 @@ const HomeScreen = () => {
   }, [page]);
 
   return (
-    <View>
-      <ScrollView>
+    <SafeAreaView>
+      {/* Search Bar */}
+      <View
+        style={{
+          backgroundColor: '#E0D3DE',
+          padding: 10,
+          margin: 10,
+          borderRadius: 10,
+        }}>
+        <TextInput
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: 20,
+          }}
+          placeholder="Not Working Yet"
+        />
+      </View>
+      <ScrollView style={{backgroundColor: '#E0D3DE'}}>
         {episodes?.map(episode => {
           return (
             <EpisodeCard
@@ -76,7 +106,12 @@ const HomeScreen = () => {
             />
           );
         })}
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 70,
+          }}>
           <TouchableOpacity
             onPress={handleLoadLess}
             style={{
@@ -116,7 +151,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -4,46 +4,25 @@ import {
   Alert,
   SafeAreaView,
   Image,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import CharacterService from '../services/CharacterService';
 import EpisodeService from '../services/EpisodeService';
-import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DetailScreen = () => {
   const characterId = useSelector(state => state.charAndEp.selectedCharacterId);
   const [character, setCharacter] = useState();
   const [episodeNames, setEpisodeNames] = useState([]);
-  const navigation = useNavigation();
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            console.log('pressed');
-          }}
-          style={{
-            marginRight: 20,
-            backgroundColor: '#f6e337',
-            borderRadius: 10,
-            padding: 10,
-          }}>
-          <Text style={{fontSize: 20, fontWeight: 'bold'}}>Fav</Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
 
   useEffect(() => {
     CharacterService.getCharacterById(characterId).then(response => {
       setCharacter(response);
     });
-  }, [characterId]);
+  }, []);
 
   useEffect(() => {
     if (character) {
@@ -58,6 +37,58 @@ const DetailScreen = () => {
     }
   }, [character]);
 
+  const handleAddToFavorites = async () => {
+    let favorites = [];
+    let isAlreadyFavorite;
+    let updatedFavorites = [];
+    try {
+      await AsyncStorage.getItem('favorites').then(value => {
+        if (value) {
+          favorites = JSON.parse(value);
+        } else {
+          return [];
+        }
+      });
+      if (favorites.length > 0 && favorites.length < 10) {
+        favorites.map(favorite => {
+          if (favorite.id == characterId) {
+            isAlreadyFavorite = true;
+            favorite['isFavorite'] = false;
+          } else {
+            favorite['isFavorite'] = true;
+          }
+        });
+
+        if (isAlreadyFavorite) {
+          favorites
+            .filter(favorite => favorite.id != characterId)
+            .map(favorite => updatedFavorites.push(favorite));
+          favorites = updatedFavorites;
+          await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+          favorites = [];
+          updatedFavorites = [];
+          Alert.alert('Removed from favorites');
+        } else {
+          character['isFavorite'] = true;
+          favorites.push(character);
+          await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+          favorites = [];
+          Alert.alert('Added to favorites');
+        }
+      } else if (favorites.length == 0) {
+        character['isFavorite'] = true;
+        favorites.push(character);
+        await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+        favorites = [];
+        Alert.alert('Added to favorites');
+      } else {
+        Alert.alert('You can only have 10 favorites');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const renderEpisodes = () => {
     return episodeNames.map((episode, index) => {
       return (
@@ -71,15 +102,14 @@ const DetailScreen = () => {
             borderBottomColor: '#01161E',
             borderBottomWidth: 1,
           }}>
-          <Text
-            key={index}
-            style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+          <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
             {episode}
           </Text>
         </View>
       );
     });
   };
+
   return (
     <SafeAreaView
       style={{
@@ -92,7 +122,7 @@ const DetailScreen = () => {
         style={{
           marginTop: 30,
         }}>
-        <View style={styles2.shadow}>
+        <View>
           <Image
             style={{height: 300, width: 300, borderRadius: 100}}
             resizeMode="cover"
@@ -160,22 +190,24 @@ const DetailScreen = () => {
             {renderEpisodes()}
           </View>
         </ScrollView>
+        <TouchableOpacity
+          onPress={() => handleAddToFavorites()}
+          style={{
+            marginTop: 20,
+            height: 50,
+            width: 350,
+            backgroundColor: '#f6e337',
+            borderRadius: 15,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{fontSize: 20, fontWeight: 'bold', color: '#124559'}}>
+            Add to favorites
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 };
-
-const styles2 = StyleSheet.create({
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 2,
-      height: 3,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 2,
-  },
-});
 
 export default DetailScreen;

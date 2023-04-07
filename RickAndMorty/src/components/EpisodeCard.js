@@ -10,7 +10,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import CharacterService from '../services/CharacterService';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {setSelectedCharacterId, setEpisodeId} from '../redux/reducers';
+import {setSelectedCharacterId, setSelectedEpisodeId} from '../redux/reducers';
 
 const EpisodeCard = props => {
   const dispatch = useDispatch();
@@ -168,7 +168,7 @@ const EpisodeCard = props => {
           <Button
             title="Episode Details"
             onPress={() => {
-              dispatch(setEpisodeId(props.episode.id));
+              dispatch(setSelectedEpisodeId(props.episode.id));
               navigation.navigate('Episode');
             }}
           />

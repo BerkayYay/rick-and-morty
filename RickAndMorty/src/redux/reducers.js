@@ -2,7 +2,8 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   selectedCharacterId: null,
-  episodeId: null,
+  selectedEpisodeId: null,
+  favorites: [],
 };
 
 export const charAndEpSlice = createSlice({
@@ -12,12 +13,16 @@ export const charAndEpSlice = createSlice({
     setSelectedCharacterId: (state, action) => {
       state.selectedCharacterId = action.payload;
     },
-    setEpisodeId: (state, action) => {
-      state.episodeId = action.payload;
+    setSelectedEpisodeId: (state, action) => {
+      state.selectedEpisodeId = action.payload;
+    },
+    setFavorites: (state, action) => {
+      state.favorites = action.payload;
     },
   },
 });
 
-export const {setSelectedCharacterId, setEpisodeId} = charAndEpSlice.actions;
+export const {setSelectedCharacterId, setSelectedEpisodeId, setFavorites} =
+  charAndEpSlice.actions;
 
 export default charAndEpSlice.reducer;

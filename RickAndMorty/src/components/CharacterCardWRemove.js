@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Image, Button} from 'react-native';
+import {View, Text, TouchableOpacity, Image, Button, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {setSelectedCharacterId} from '../redux/reducers';
@@ -14,17 +14,17 @@ const CharacterCardWRemove = props => {
 
   useEffect(() => {
     const getFavorites = async () => {
-      let favorites = [];
+      let favorite = [];
       try {
         await AsyncStorage.getItem('favorites').then(value => {
           if (value) {
-            favorites = JSON.parse(value);
+            favorite = JSON.parse(value);
           } else {
             return [];
           }
         });
-        setFavorites(favorites);
-        favorites = [];
+        setFavorites(favorite);
+        favorite = [];
       } catch (e) {
         console.log(e);
       }
@@ -53,6 +53,19 @@ const CharacterCardWRemove = props => {
     }
   };
 
+  openAlert = () => {
+    Alert.alert(
+      'Warning!',
+      'Do you want to remove this character from your favorites?',
+      [
+        {text: 'Yes', onPress: () => handleRemoveFromFavorites(character.id)},
+        {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
+      ],
+      {
+        cancelable: true,
+      },
+    );
+  };
   return (
     <TouchableOpacity
       key={character.id}
@@ -142,7 +155,7 @@ const CharacterCardWRemove = props => {
         <Button
           style={{marginTop: 10}}
           title="Remove"
-          onPress={() => handleRemoveFromFavorites(character.id)}
+          onPress={() => openAlert()}
         />
       </View>
     </TouchableOpacity>
